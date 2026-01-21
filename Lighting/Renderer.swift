@@ -41,9 +41,12 @@ class Renderer: NSObject {
     
     let depthStencilState: MTLDepthStencilState
     
+    var grabber: Grabber!
     var softbody: SoftBody!
     
     var lastTime: CFTimeInterval = CACurrentMediaTime()
+    
+    var viewBounds: CGSize!
     
     // Lights
     lazy var sunlight: Light = {
@@ -82,7 +85,7 @@ class Renderer: NSObject {
     // Camera holds view and projection matrices
     lazy var camera: Camera = {
         let camera = ArcballCamera()
-        camera.distance = 2.5
+        camera.distance = 5.0
         camera.target = [0.0, 0.5, 0]
         camera.rotation.x = Float(-10).degreesToRadians
         camera.rotation.y = .pi
@@ -117,6 +120,8 @@ class Renderer: NSObject {
                                              blue: 1.0, alpha: 1.0)
         metalView.delegate = self
         
+        viewBounds = metalView.bounds.size
+        
         // add the model to the scene
         let plane = Model(name: "plane.obj")
         plane.position = [0, 0, 0]
@@ -126,8 +131,10 @@ class Renderer: NSObject {
 //        models.append(fir)
         
         softbody = SoftBody(name: "bunny.json")
-        softbody.translate(x: 0, y: 2.4, z: 0)
+        softbody.translate(x: 0, y: 2.0, z: 0)
         softbody.updateMeshes()
+        
+        grabber = Grabber(renderer: self)
         
         mtkView(metalView, drawableSizeWillChange: metalView.bounds.size)
         lights.append(sunlight)
@@ -193,6 +200,7 @@ extension Renderer: MTKViewDelegate {
         // softbody.pos[1] += 0.1
         softbody.simulate(dt: dt)
         softbody.updateMeshes()
+        
         uniforms.modelMatrix = softbody.modelMatrix
         uniforms.normalMatrix = uniforms.modelMatrix.upperLeft
         

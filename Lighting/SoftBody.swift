@@ -1,5 +1,10 @@
 import MetalKit
 
+struct BoundingBox {
+    var min: SIMD3<Float>
+    var max: SIMD3<Float>
+}
+
 class SoftBody: Node {
     // MARK: simulation vars
     
@@ -35,6 +40,8 @@ class SoftBody: Node {
     var posBuffer : MTLBuffer!
     var norBuffer : MTLBuffer!
     var indexBuffer : MTLBuffer!
+    
+    var boundingBox: BoundingBox = BoundingBox(min: .zero, max: .zero)
     
     init(name : String, edgeCompliance edge: Float = 100.0, volCompliance vol: Float = 0.0) {
         super.init()
@@ -105,6 +112,7 @@ class SoftBody: Node {
         }
         
         initPhysics()
+        rebuildBoundingBox()
         
         // initialize softbody as a metal mesh
         pipelineState = SoftBody.buildPipelineState()
@@ -203,6 +211,23 @@ class SoftBody: Node {
         }
     }
     
+    func rebuildBoundingBox() {
+        boundingBox.min = SIMD3<Float>(.infinity, .infinity, .infinity)
+        boundingBox.max = SIMD3<Float>(-.infinity, -.infinity, -.infinity)
+        
+        for i in 0..<surfaceIds.count {
+            let posArrayIndex = Int(surfaceIds[i]) * 3
+            let vertex = SIMD3<Float>(
+                x: pos[posArrayIndex],
+                y: pos[posArrayIndex + 1],
+                z: pos[posArrayIndex + 2]
+            )
+            
+            boundingBox.min = min(boundingBox.min, vertex)
+            boundingBox.max = max(boundingBox.max, vertex)
+        }
+    }
+    
     func simulate(dt: Double) {
 //        if (gPhysicsScene.paused)
 //            return;
@@ -259,6 +284,7 @@ class SoftBody: Node {
         SoftBody.calculateNormals(surfaceIds: surfaceIds, pos: pos, normals: &normals)
         posBuffer.contents().copyMemory(from: pos, byteCount: pos.count * MemoryLayout<Float>.stride)
         norBuffer.contents().copyMemory(from: normals, byteCount: normals.count * MemoryLayout<Float>.stride)
+        rebuildBoundingBox()
     }
     
     func translate(x : Float, y : Float, z : Float) {
