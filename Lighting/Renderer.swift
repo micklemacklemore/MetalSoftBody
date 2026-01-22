@@ -132,7 +132,7 @@ class Renderer: NSObject {
 //        models.append(fir)
         
         softbody = SoftBody(name: "bunny.json")
-        softbody.translate(x: 0, y: 2.0, z: 0)
+        softbody.translate(x: 0, y: 0.1, z: 0)
         softbody.updateMeshes()
         
         grabber = Grabber(renderer: self)
@@ -200,6 +200,7 @@ extension Renderer: MTKViewDelegate {
         // render softbody
         // softbody.pos[1] += 0.1
         softbody.simulate(dt: dt)
+        grabber.increaseTime(dt: dt)
         softbody.updateMeshes()
         
         uniforms.modelMatrix = softbody.modelMatrix

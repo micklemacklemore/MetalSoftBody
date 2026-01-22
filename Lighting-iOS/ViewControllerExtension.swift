@@ -33,6 +33,7 @@ import UIKit
 
 extension ViewController {
     static var previousScale: CGFloat = 1
+    static var grabMode: Bool = false
     
     func addGestureRecognizers(to view: UIView) {
         let pan = UIPanGestureRecognizer(target: self,
@@ -50,10 +51,21 @@ extension ViewController {
         let delta = float2(Float(translation.x),
                            Float(-translation.y))
         
-        let result: Bool? = renderer?.grabber.start(mousex: Float(location.x), mousey: Float(location.y))
+        if gesture.state == .began, let result = renderer?.grabber.start(mousex: Float(location.x), mousey: Float(location.y)) {
+            ViewController.grabMode = result
+        }
+        
+        if gesture.state == .changed, ViewController.grabMode == true {
+            renderer?.grabber.move(mousex: Float(location.x), mousey: Float(location.y))
+        }
+        
+        if gesture.state == .ended {
+            ViewController.grabMode = false
+            renderer?.grabber.end()
+        }
         
         // disable camera rotate if we're "grabbing"
-        if (!result!) {
+        if (!ViewController.grabMode) {
             renderer?.camera.rotate(delta: delta)
         }
         gesture.setTranslation(.zero, in: gesture.view)

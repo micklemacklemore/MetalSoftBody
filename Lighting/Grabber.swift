@@ -5,72 +5,102 @@ struct Ray {
     var dir: SIMD3<Float>
 }
 
-//constructor() {
-//    this.raycaster = new THREE.Raycaster();
-//    this.raycaster.layers.set(1);
-//    this.raycaster.params.Line.threshold = 0.1;
-//    this.physicsObject = null;
-//    this.distance = 0.0;
-//    this.prevPos = new THREE.Vector3();
-//    this.vel = new THREE.Vector3();
-//    this.time = 0.0;
-//}
-//increaseTime(dt) {
-//    this.time += dt;
-//}
+struct HitResult {
+    var intersectPoint: SIMD3<Float>
+    var closestParticleIdx: Int
+    var distance: Float
+}
 
 class Grabber {
-    
     let renderer: Renderer!
     
     var prevPos: SIMD3<Float> = .zero
     var vel: SIMD3<Float> = .zero
-    var time: Float = 0.0
-    var distance: Float = 0.0 // ??? do I need this?
+    var time: Double = 0.0
+    var distance: Float = 0.0
+    var physicsObject: SoftBody? = nil
     
     init (renderer: Renderer) {
         self.renderer = renderer
     }
     
-    func increaseTime(dt: Float) {
+    func increaseTime(dt: Double) {
         self.time += dt
     }
     
     func start(mousex x: Float, mousey y: Float) -> Bool {
-        // screen "bounds" coordinates to clip space
-        let x: Float = (2.0 * x) / Float(renderer.viewBounds.width) - 1.0;
-        let y: Float = 1.0 - (2.0 * y) / Float(renderer.viewBounds.height);
-        let z: Float = 1.0;
-        let ray_clip: SIMD4<Float> = SIMD4<Float>(x, y, z, 1.0)
-        
-        // clip space to eye space
-        var ray_eye: SIMD4<Float> = renderer.camera.projectionMatrix.inverse * ray_clip
-        ray_eye.z = 1.0
-        ray_eye.w = 0.0
-        
-        // eye space to world space
-        var ray_world: SIMD3<Float> = (renderer.camera.viewMatrix.inverse * ray_eye).xyz
-        ray_world = normalize(ray_world)
-        
-        let ray = Ray(orig: renderer.camera.position, dir: ray_world)
+        let ray = mouseCoordsToWorldSpaceRay(x, y)
         
         let bboxresult = Grabber.intersectAABB(ray: ray, min: renderer.softbody.boundingBox.min, max: renderer.softbody.boundingBox.max)
-        // print("bbox hit? \(bboxresult)")
         
         if bboxresult, let result = getTriangle(ray: ray) {
-            renderer.debugIntersect = result
+            let pos = result.intersectPoint
+            renderer.debugIntersect = pos
+            self.distance = result.distance
+            self.prevPos = pos
+            self.vel = .zero
+            self.time = 0.0
+            
+            self.physicsObject = renderer.softbody
+            self.physicsObject!.startGrab(
+                idx: result.closestParticleIdx,
+                pos: pos
+            )
+            
             return true
         }
         
         return false
     }
     
-    func getTriangle(ray: Ray) -> SIMD3<Float>? {
+    func move(mousex x: Float, mousey y: Float) {
+        let ray = mouseCoordsToWorldSpaceRay(x, y)
+        let pos = ray.orig + ray.dir * self.distance
+        renderer.debugIntersect = pos
+        
+        self.vel = pos - self.prevPos
+        if (self.time > 0.0) {
+            self.vel /= Float(self.time)
+        } else {
+            self.vel = .zero
+        }
+        self.prevPos = pos
+        self.time = 0.0
+        
+        self.physicsObject!.updateGrab(pos: pos, vel: self.vel)
+    }
+    
+    func end() {
+        if physicsObject != nil {
+            self.physicsObject!.endGrab(pos: self.prevPos, vel: self.vel)
+            self.physicsObject = nil
+        }
+    }
+    
+    func mouseCoordsToWorldSpaceRay(_ x: Float, _ y: Float) -> Ray {
+        // screen "bounds" coordinates to clip space
+        let ray_clip: SIMD4<Float> = SIMD4<Float>(
+            (2.0 * x) / Float(renderer.viewBounds.width) - 1.0,
+            1.0 - (2.0 * y) / Float(renderer.viewBounds.height),
+            1.0,
+            1.0
+        )
+        
+        // clip space to eye space
+        var ray_eye: SIMD4<Float> = renderer.camera.projectionMatrix.inverse * ray_clip
+        ray_eye.z = 1.0
+        ray_eye.w = 0.0
+        
+        return Ray(orig: renderer.camera.position, dir: normalize((renderer.camera.viewMatrix.inverse * ray_eye).xyz))
+    }
+    
+    func getTriangle(ray: Ray) -> HitResult? {
         let sb = renderer.softbody!
         var mint: Float = .greatestFiniteMagnitude
         var minu: Float = 0.0
         var minv: Float = 0.0
-        var triangle: [SIMD3<Float>] = []
+        var trianglePos: [SIMD3<Float>] = []
+        var triangleIdx: [Int] = []
         
         var hit: Bool = false
         
@@ -112,7 +142,12 @@ class Grabber {
                 mint = t
                 minu = u
                 minv = v
-                triangle = [v0, v1, v2]
+                trianglePos = [v0, v1, v2]
+                triangleIdx = [
+                    Int(sb.surfaceIds[i]),
+                    Int(sb.surfaceIds[i + 1]),
+                    Int(sb.surfaceIds[i + 2])
+                ]
             }
         }
         
@@ -122,18 +157,25 @@ class Grabber {
         
         let w: Float = 1.0 - minu - minv
         
+        var hitresult: HitResult = HitResult(intersectPoint: .zero, closestParticleIdx: 0, distance: mint)
+        
+        // closest particle. we return the index used for SoftBody.pos
+        
         // u
         if (minu >= minv && minu >= w) {
-            return triangle[0]
+            hitresult.closestParticleIdx = triangleIdx[0]
         }
-        
         // v
         if (minv >= minu && minv >= w) {
-            return triangle[1]
+            hitresult.closestParticleIdx = triangleIdx[1]
         }
-        
         // w
-        return triangle[2]
+        hitresult.closestParticleIdx = triangleIdx[2]
+        
+        // intersect point
+        hitresult.intersectPoint = minu * trianglePos[0] + minv * trianglePos[1] + w * trianglePos[2]
+        
+        return hitresult
     }
     
     static func intersectAABB(ray r: Ray, min: SIMD3<Float>, max: SIMD3<Float>) -> Bool {

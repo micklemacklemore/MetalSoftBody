@@ -31,6 +31,9 @@ class SoftBody: Node {
     var temp: [Float]!
     var grads: [Float]!
     
+    var grabId: Int = -1
+    var grabInvMass: Float = 0.0
+    
     let volIdOrder : [[Int]] = [[1, 3, 2], [0, 2, 3], [0, 3, 1], [0, 1, 2]]
     
     // MARK: Metal vars
@@ -43,7 +46,7 @@ class SoftBody: Node {
     
     var boundingBox: BoundingBox = BoundingBox(min: .zero, max: .zero)
     
-    init(name : String, edgeCompliance edge: Float = 100.0, volCompliance vol: Float = 0.0) {
+    init(name : String, edgeCompliance edge: Float = 500.0, volCompliance vol: Float = 0.0) {
         super.init()
         
         edgeCompliance = edge
@@ -229,27 +232,6 @@ class SoftBody: Node {
     }
     
     func simulate(dt: Double) {
-//        if (gPhysicsScene.paused)
-//            return;
-//
-//        var sdt = gPhysicsScene.dt / gPhysicsScene.numSubsteps;
-//
-//        for (var step = 0; step < gPhysicsScene.numSubsteps; step++) {
-//
-//            for (var i = 0; i < gPhysicsScene.objects.length; i++)
-//                gPhysicsScene.objects[i].preSolve(sdt, gPhysicsScene.gravity);
-//
-//            for (var i = 0; i < gPhysicsScene.objects.length; i++)
-//                gPhysicsScene.objects[i].solve(sdt);
-//
-//            for (var i = 0; i < gPhysicsScene.objects.length; i++)
-//                gPhysicsScene.objects[i].postSolve(sdt);
-//
-//        }
-//
-//        gGrabber.increaseTime(gPhysicsScene.dt);
-        // TODO: Implement this
-        
         let gravity = SIMD3<Float>(0, -9.81, 0)
         let sdt : Float = Float(dt) / 10.0
         
@@ -397,5 +379,32 @@ class SoftBody: Node {
                 vecAdd(&pos, id, grads, j, s * invMass[id])
             }
         }
+    }
+    
+    func startGrab(idx: Int, pos: SIMD3<Float>) {
+        grabId = idx
+        let p = [pos.x, pos.y, pos.z]
+        
+        if grabId >= 0 {
+            grabInvMass = invMass[grabId]
+            invMass[grabId] = 0.0
+            vecCopy(&self.pos, grabId, p, 0)
+        }
+    }
+    
+    func updateGrab(pos: SIMD3<Float>, vel: SIMD3<Float>) {
+        if self.grabId >= 0 {
+            let p = [pos.x, pos.y, pos.z]
+            vecCopy(&self.pos, self.grabId, p, 0)
+        }
+    }
+    
+    func endGrab(pos: SIMD3<Float>, vel: SIMD3<Float>) {
+//        if self.grabId >= 0 {
+//            invMass[grabId] = grabInvMass
+//            let v = [vel.x, vel.y, vel.z]
+//            vecCopy(&self.vel, grabId, v, 0)
+//        }
+//        grabId = -1
     }
 }
