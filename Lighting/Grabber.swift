@@ -54,20 +54,22 @@ class Grabber {
     }
     
     func move(mousex x: Float, mousey y: Float) {
-        let ray = mouseCoordsToWorldSpaceRay(x, y)
-        let pos = ray.orig + ray.dir * self.distance
-        renderer.debugIntersect = pos
-        
-        self.vel = pos - self.prevPos
-        if (self.time > 0.0) {
-            self.vel /= Float(self.time)
-        } else {
-            self.vel = .zero
+        if physicsObject != nil {
+            let ray = mouseCoordsToWorldSpaceRay(x, y)
+            let pos = ray.orig + ray.dir * self.distance
+            renderer.debugIntersect = pos
+            
+            self.vel = pos - self.prevPos
+            if (self.time > 0.0) {
+                self.vel /= Float(self.time)
+            } else {
+                self.vel = .zero
+            }
+            self.prevPos = pos
+            self.time = 0.0
+            
+            self.physicsObject!.updateGrab(pos: pos, vel: self.vel)
         }
-        self.prevPos = pos
-        self.time = 0.0
-        
-        self.physicsObject!.updateGrab(pos: pos, vel: self.vel)
     }
     
     func end() {

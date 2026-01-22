@@ -85,7 +85,7 @@ class Renderer: NSObject {
     // Camera holds view and projection matrices
     lazy var camera: Camera = {
         let camera = ArcballCamera()
-        camera.distance = 5.0
+        camera.distance = 3.5
         camera.target = [0.0, 0.5, 0]
         camera.rotation.x = Float(-10).degreesToRadians
         camera.rotation.y = .pi
@@ -132,7 +132,7 @@ class Renderer: NSObject {
 //        models.append(fir)
         
         softbody = SoftBody(name: "bunny.json")
-        softbody.translate(x: 0, y: 0.1, z: 0)
+        softbody.translate(x: 0, y: 0.05, z: 0)
         softbody.updateMeshes()
         
         grabber = Grabber(renderer: self)
