@@ -488,16 +488,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 				this.raycaster.setFromCamera(this.mousePos, gCamera);
 			}
 			start(x, y) {
-				this.physicsObject = null;
-				this.updateRaycaster(x, y);
-				var intersects = this.raycaster.intersectObjects(gThreeScene.children);
+				this.physicsObject = null; 
+				this.updateRaycaster(x, y);  // shoot ray with given mouse ptrs
+				var intersects = this.raycaster.intersectObjects(gThreeScene.children); // get back intersection daya
 				if (intersects.length > 0) {
 					var obj = intersects[0].object.userData;
-					if (obj) {
+					if (obj) {	// if we got an object back
 						this.physicsObject = obj;
 						this.distance = intersects[0].distance;
 						var pos = this.raycaster.ray.origin.clone();
-						pos.addScaledVector(this.raycaster.ray.direction, this.distance);
+						pos.addScaledVector(this.raycaster.ray.direction, this.distance);  // pos is point of intersect
 						this.physicsObject.startGrab(pos);
 						this.prevPos.copy(pos);
 						this.vel.set(0.0, 0.0, 0.0);
@@ -509,6 +509,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 			}
 			move(x, y) {
 				if (this.physicsObject) {
+
+					// instead of doing another intersection check, we just generate the new ray
+					// from mouseptr and use the same distance we got at start
 					this.updateRaycaster(x, y);
 					var pos = this.raycaster.ray.origin.clone();
 					pos.addScaledVector(this.raycaster.ray.direction, this.distance);

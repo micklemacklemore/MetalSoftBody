@@ -1,18 +1,42 @@
+import MetalKit
 
+struct Ray {
+    var orig: SIMD3<Float>
+    var dir: SIMD3<Float>
+}
+
+//constructor() {
+//    this.raycaster = new THREE.Raycaster();
+//    this.raycaster.layers.set(1);
+//    this.raycaster.params.Line.threshold = 0.1;
+//    this.physicsObject = null;
+//    this.distance = 0.0;
+//    this.prevPos = new THREE.Vector3();
+//    this.vel = new THREE.Vector3();
+//    this.time = 0.0;
+//}
+//increaseTime(dt) {
+//    this.time += dt;
+//}
 
 class Grabber {
-    struct Ray {
-        var orig: SIMD3<Float>
-        var dir: SIMD3<Float>
-    }
     
     let renderer: Renderer!
+    
+    var prevPos: SIMD3<Float> = .zero
+    var vel: SIMD3<Float> = .zero
+    var time: Float = 0.0
+    var distance: Float = 0.0 // ??? do I need this?
     
     init (renderer: Renderer) {
         self.renderer = renderer
     }
     
-    func rayCast (mousex x: Float, mousey y: Float) -> Bool {
+    func increaseTime(dt: Float) {
+        self.time += dt
+    }
+    
+    func start(mousex x: Float, mousey y: Float) -> Bool {
         // screen "bounds" coordinates to clip space
         let x: Float = (2.0 * x) / Float(renderer.viewBounds.width) - 1.0;
         let y: Float = 1.0 - (2.0 * y) / Float(renderer.viewBounds.height);
@@ -30,19 +54,89 @@ class Grabber {
         
         let ray = Ray(orig: renderer.camera.position, dir: ray_world)
         
-        let bboxresult = intersectAABB(ray: ray, min: renderer.softbody.boundingBox.min, max: renderer.softbody.boundingBox.max)
-        print("bbox hit? \(bboxresult)")
+        let bboxresult = Grabber.intersectAABB(ray: ray, min: renderer.softbody.boundingBox.min, max: renderer.softbody.boundingBox.max)
+        // print("bbox hit? \(bboxresult)")
         
-        if (bboxresult) {
-            
-            
+        if bboxresult, let result = getTriangle(ray: ray) {
+            renderer.debugIntersect = result
             return true
         }
         
         return false
     }
     
-    func intersectAABB(ray r: Ray, min: SIMD3<Float>, max: SIMD3<Float>) -> Bool {
+    func getTriangle(ray: Ray) -> SIMD3<Float>? {
+        let sb = renderer.softbody!
+        var mint: Float = .greatestFiniteMagnitude
+        var minu: Float = 0.0
+        var minv: Float = 0.0
+        var triangle: [SIMD3<Float>] = []
+        
+        var hit: Bool = false
+        
+        for i in stride(from: 0, to: sb.surfaceIds.count, by: 3) {
+            
+            let i0 = Int(sb.surfaceIds[i])     * 3
+            let i1 = Int(sb.surfaceIds[i + 1]) * 3
+            let i2 = Int(sb.surfaceIds[i + 2]) * 3
+            
+            let v0 = SIMD3<Float>(
+                sb.pos[i0],
+                sb.pos[i0 + 1],
+                sb.pos[i0 + 2]
+            )
+
+            let v1 = SIMD3<Float>(
+                sb.pos[i1],
+                sb.pos[i1 + 1],
+                sb.pos[i1 + 2]
+            )
+
+            let v2 = SIMD3<Float>(
+                sb.pos[i2],
+                sb.pos[i2 + 1],
+                sb.pos[i2 + 2]
+            )
+            
+            var t: Float = 0.0, u: Float = 0.0, v: Float = 0.0
+            
+            let result = Grabber.intersectTriangle(ray: ray, v0: v0, v1: v1, v2: v2, t: &t, u: &u, v: &v)
+            
+            if (!result) {
+                continue
+            }
+            
+            hit = true
+            
+            if (t < mint) {
+                mint = t
+                minu = u
+                minv = v
+                triangle = [v0, v1, v2]
+            }
+        }
+        
+        if (!hit) {
+            return nil
+        }
+        
+        let w: Float = 1.0 - minu - minv
+        
+        // u
+        if (minu >= minv && minu >= w) {
+            return triangle[0]
+        }
+        
+        // v
+        if (minv >= minu && minv >= w) {
+            return triangle[1]
+        }
+        
+        // w
+        return triangle[2]
+    }
+    
+    static func intersectAABB(ray r: Ray, min: SIMD3<Float>, max: SIMD3<Float>) -> Bool {
         var tmin: Float = (min.x - r.orig.x) / r.dir.x
         var tmax: Float = (max.x - r.orig.x) / r.dir.x
         
@@ -88,7 +182,72 @@ class Grabber {
         
         return true
     }
+    
+    static func intersectTriangle(ray: Ray, v0: SIMD3<Float>, v1: SIMD3<Float>, v2: SIMD3<Float>, t: inout Float, u: inout Float, v: inout Float) -> Bool {
+        
+        let orig = ray.orig
+        let dir = ray.dir
+        
+        // compute plane's normal
+        let v0v1 = v1 - v0
+        let v0v2 = v2 - v0
+        
+        let N = cross(v0v1, v0v2)
+        let denom = dot(N, N)
+        
+        // Step 1: finding P
+        
+        // check if ray and plane are parallel ?
+        let NdotRayDirection = dot(N, dir)
+        
+        if abs(NdotRayDirection) < 0.0001 {
+            return false
+        }
+
+        let d = -dot(N, v0)
+        t = -(dot(N, orig) + d) / NdotRayDirection
+        
+        if (t < 0) {
+            return false
+        }
+        
+        // compute the intersection point
+        let P = orig + t * dir
+        
+        // Step 2: inside-outside test
+        var C: SIMD3<Float>
+        
+        let v1p = P - v1
+        let v1v2 = v2 - v1
+        C = cross(v1v2, v1p)
+        u = dot(N, C)
+        if (u < 0) {
+            return false
+        }
+        
+        let v2p = P - v2
+        let v2v0 = v0 - v2
+        C = cross(v2v0, v2p)
+        v = dot(N, C)
+        if (v < 0) {
+            return false
+        }
+        
+        let v0p = P - v0
+        C = cross(v0v1, v0p)
+        
+        if (dot(N, C) < 0) {
+            return false
+        }
+        
+        u /= denom
+        v /= denom
+        
+        return true
+    }
 }
+
+
 
 //bool rayTriangleIntersect(
 //    const Vec3f &orig, const Vec3f &dir,
@@ -146,3 +305,4 @@ class Grabber {
 //
 //    return true; // this ray hits the triangle
 //}
+

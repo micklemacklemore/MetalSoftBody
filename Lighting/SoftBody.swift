@@ -177,7 +177,7 @@ class SoftBody: Node {
         normals: inout [Float]
     ) {
         normals = Array<Float>()
-        normals.reserveCapacity(surfaceIds.count) // optional perf win
+        normals.reserveCapacity(surfaceIds.count)
 
         for i in stride(from: 0, to: surfaceIds.count, by: 3) {
 

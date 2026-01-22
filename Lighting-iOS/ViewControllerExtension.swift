@@ -50,13 +50,18 @@ extension ViewController {
         let delta = float2(Float(translation.x),
                            Float(-translation.y))
         
-        let result: Bool? = renderer?.grabber.rayCast(mousex: Float(location.x), mousey: Float(location.y))
+        let result: Bool? = renderer?.grabber.start(mousex: Float(location.x), mousey: Float(location.y))
         
         // disable camera rotate if we're "grabbing"
         if (!result!) {
             renderer?.camera.rotate(delta: delta)
         }
         gesture.setTranslation(.zero, in: gesture.view)
+        
+        //gesture states
+        //began
+        //changed
+        //ended
     }
     
     @objc func handlePinch(gesture: UIPinchGestureRecognizer) {

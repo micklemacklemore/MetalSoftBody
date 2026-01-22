@@ -100,6 +100,7 @@ class Renderer: NSObject {
         return buildLightPipelineState()
     }()
     
+    var debugIntersect: SIMD3<Float>? = nil
     
     init(metalView: MTKView) {
         guard
@@ -245,6 +246,9 @@ extension Renderer: MTKViewDelegate {
         }
         
         // debugLights(renderEncoder: renderEncoder, lightType: Spotlight)
+        if debugIntersect != nil {
+            drawPointLight(renderEncoder: renderEncoder, position: debugIntersect!, color: float3(0, 1, 0))
+        }
         
         renderEncoder.endEncoding()
         guard let drawable = view.currentDrawable else {
