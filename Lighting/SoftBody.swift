@@ -400,11 +400,11 @@ class SoftBody: Node {
     }
     
     func endGrab(pos: SIMD3<Float>, vel: SIMD3<Float>) {
-//        if self.grabId >= 0 {
-//            invMass[grabId] = grabInvMass
-//            let v = [vel.x, vel.y, vel.z]
-//            vecCopy(&self.vel, grabId, v, 0)
-//        }
-//        grabId = -1
+        if self.grabId >= 0 {
+            invMass[grabId] = grabInvMass
+            let v = [vel.x, vel.y, vel.z]
+            vecCopy(&self.vel, grabId, v, 0)
+        }
+        grabId = -1
     }
 }
