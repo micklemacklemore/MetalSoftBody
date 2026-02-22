@@ -46,7 +46,7 @@ class SoftBody: Node {
     
     var boundingBox: BoundingBox = BoundingBox(min: .zero, max: .zero)
     
-    init(name : String, edgeCompliance edge: Float = 20.0, volCompliance vol: Float = 0.0) {
+    init(name : String, edgeCompliance edge: Float = 100.0, volCompliance vol: Float = 0.0) {
         super.init()
         
         edgeCompliance = edge

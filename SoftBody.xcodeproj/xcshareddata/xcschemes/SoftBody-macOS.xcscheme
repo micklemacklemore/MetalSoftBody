@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "1384A36E22C1B388006036BA"
-               BuildableName = "Lighting-macOS.app"
-               BlueprintName = "Lighting-macOS"
-               ReferencedContainer = "container:Lighting.xcodeproj">
+               BuildableName = "SoftBody-macOS.app"
+               BlueprintName = "SoftBody-macOS"
+               ReferencedContainer = "container:SoftBody.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,9 +45,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1384A36E22C1B388006036BA"
-            BuildableName = "Lighting-macOS.app"
-            BlueprintName = "Lighting-macOS"
-            ReferencedContainer = "container:Lighting.xcodeproj">
+            BuildableName = "SoftBody-macOS.app"
+            BlueprintName = "SoftBody-macOS"
+            ReferencedContainer = "container:SoftBody.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -62,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1384A36E22C1B388006036BA"
-            BuildableName = "Lighting-macOS.app"
-            BlueprintName = "Lighting-macOS"
-            ReferencedContainer = "container:Lighting.xcodeproj">
+            BuildableName = "SoftBody-macOS.app"
+            BlueprintName = "SoftBody-macOS"
+            ReferencedContainer = "container:SoftBody.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

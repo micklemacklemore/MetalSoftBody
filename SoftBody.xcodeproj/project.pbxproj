@@ -76,7 +76,7 @@
 		130F083A22C4424A001B7909 /* treefir.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = treefir.obj; sourceTree = "<group>"; };
 		130F083B22C4424A001B7909 /* treefir.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = treefir.mtl; sourceTree = "<group>"; };
 		1343BA5622C2DB1B007EA044 /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
-		1384A36F22C1B388006036BA /* Lighting-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lighting-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1384A36F22C1B388006036BA /* SoftBody-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SoftBody-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1384A37222C1B388006036BA /* LocalClasses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalClasses.swift; sourceTree = "<group>"; };
 		1384A37422C1B389006036BA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1384A37722C1B389006036BA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -86,7 +86,7 @@
 		1384A38822C1B53E006036BA /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
 		1384A38A22C1BA95006036BA /* Primitive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Primitive.swift; sourceTree = "<group>"; };
 		1384A38C22C1BE70006036BA /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
-		1384A3D922C1F04B006036BA /* Lighting-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lighting-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1384A3D922C1F04B006036BA /* SoftBody-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SoftBody-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1384A3E222C1F04B006036BA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		1384A3E422C1F04D006036BA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1384A3E722C1F04D006036BA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -123,9 +123,9 @@
 		1384A36622C1B388006036BA = {
 			isa = PBXGroup;
 			children = (
-				1384A37122C1B388006036BA /* Lighting */,
-				1384A3F522C1F210006036BA /* Lighting-macOS */,
-				1384A3DA22C1F04B006036BA /* Lighting-iOS */,
+				1384A37122C1B388006036BA /* SoftBody */,
+				1384A3F522C1F210006036BA /* SoftBody-macOS */,
+				1384A3DA22C1F04B006036BA /* SoftBody-iOS */,
 				1384A37022C1B388006036BA /* Products */,
 			);
 			sourceTree = "<group>";
@@ -133,13 +133,13 @@
 		1384A37022C1B388006036BA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1384A36F22C1B388006036BA /* Lighting-macOS.app */,
-				1384A3D922C1F04B006036BA /* Lighting-iOS.app */,
+				1384A36F22C1B388006036BA /* SoftBody-macOS.app */,
+				1384A3D922C1F04B006036BA /* SoftBody-iOS.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		1384A37122C1B388006036BA /* Lighting */ = {
+		1384A37122C1B388006036BA /* SoftBody */ = {
 			isa = PBXGroup;
 			children = (
 				D0A9CC8C2F1F7154001282BC /* Grabber.swift */,
@@ -159,7 +159,7 @@
 				1384A39622C1DFC2006036BA /* Models */,
 				1384A37422C1B389006036BA /* Assets.xcassets */,
 			);
-			path = Lighting;
+			path = SoftBody;
 			sourceTree = "<group>";
 		};
 		1384A39622C1DFC2006036BA /* Models */ = {
@@ -176,7 +176,7 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
-		1384A3DA22C1F04B006036BA /* Lighting-iOS */ = {
+		1384A3DA22C1F04B006036BA /* SoftBody-iOS */ = {
 			isa = PBXGroup;
 			children = (
 				130F082C22C43CC8001B7909 /* ViewControllerExtension.swift */,
@@ -186,10 +186,10 @@
 				1384A3E622C1F04D006036BA /* LaunchScreen.storyboard */,
 				1384A3E922C1F04D006036BA /* Info.plist */,
 			);
-			path = "Lighting-iOS";
+			path = "SoftBody-iOS";
 			sourceTree = "<group>";
 		};
-		1384A3F522C1F210006036BA /* Lighting-macOS */ = {
+		1384A3F522C1F210006036BA /* SoftBody-macOS */ = {
 			isa = PBXGroup;
 			children = (
 				130F082922C43C57001B7909 /* ViewControllerExtension.swift */,
@@ -198,7 +198,7 @@
 				1384A37922C1B389006036BA /* Info.plist */,
 				1384A37A22C1B389006036BA /* Lighting.entitlements */,
 			);
-			path = "Lighting-macOS";
+			path = "SoftBody-macOS";
 			sourceTree = "<group>";
 		};
 		13A7ABC722C2374C00609310 /* Utility */ = {
@@ -214,9 +214,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1384A36E22C1B388006036BA /* Lighting-macOS */ = {
+		1384A36E22C1B388006036BA /* SoftBody-macOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1384A37D22C1B389006036BA /* Build configuration list for PBXNativeTarget "Lighting-macOS" */;
+			buildConfigurationList = 1384A37D22C1B389006036BA /* Build configuration list for PBXNativeTarget "SoftBody-macOS" */;
 			buildPhases = (
 				1384A36B22C1B388006036BA /* Sources */,
 				1384A36C22C1B388006036BA /* Frameworks */,
@@ -226,14 +226,14 @@
 			);
 			dependencies = (
 			);
-			name = "Lighting-macOS";
+			name = "SoftBody-macOS";
 			productName = Pipeline;
-			productReference = 1384A36F22C1B388006036BA /* Lighting-macOS.app */;
+			productReference = 1384A36F22C1B388006036BA /* SoftBody-macOS.app */;
 			productType = "com.apple.product-type.application";
 		};
-		1384A3D822C1F04B006036BA /* Lighting-iOS */ = {
+		1384A3D822C1F04B006036BA /* SoftBody-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1384A3EA22C1F04D006036BA /* Build configuration list for PBXNativeTarget "Lighting-iOS" */;
+			buildConfigurationList = 1384A3EA22C1F04D006036BA /* Build configuration list for PBXNativeTarget "SoftBody-iOS" */;
 			buildPhases = (
 				1384A3D522C1F04B006036BA /* Sources */,
 				1384A3D622C1F04B006036BA /* Frameworks */,
@@ -243,9 +243,9 @@
 			);
 			dependencies = (
 			);
-			name = "Lighting-iOS";
+			name = "SoftBody-iOS";
 			productName = "Pipeline-iOS";
-			productReference = 1384A3D922C1F04B006036BA /* Lighting-iOS.app */;
+			productReference = 1384A3D922C1F04B006036BA /* SoftBody-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -266,7 +266,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 1384A36A22C1B388006036BA /* Build configuration list for PBXProject "Lighting" */;
+			buildConfigurationList = 1384A36A22C1B388006036BA /* Build configuration list for PBXProject "SoftBody" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -279,8 +279,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1384A36E22C1B388006036BA /* Lighting-macOS */,
-				1384A3D822C1F04B006036BA /* Lighting-iOS */,
+				1384A36E22C1B388006036BA /* SoftBody-macOS */,
+				1384A3D822C1F04B006036BA /* SoftBody-iOS */,
 			);
 		};
 /* End PBXProject section */
@@ -522,13 +522,13 @@
 				CODE_SIGN_ENTITLEMENTS = "Lighting-macOS/Lighting.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = "Lighting-macOS/Info.plist";
+				INFOPLIST_FILE = "SoftBody-macOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
-				PRODUCT_BUNDLE_IDENTIFIER = com.razeware.Lighting;
+				PRODUCT_BUNDLE_IDENTIFIER = com.michaelmason.softbodysim;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -541,13 +541,13 @@
 				CODE_SIGN_ENTITLEMENTS = "Lighting-macOS/Lighting.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = "Lighting-macOS/Info.plist";
+				INFOPLIST_FILE = "SoftBody-macOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
-				PRODUCT_BUNDLE_IDENTIFIER = com.razeware.Lighting;
+				PRODUCT_BUNDLE_IDENTIFIER = com.michaelmason.softbodysim;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -559,7 +559,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = NTPYM9QGRV;
-				INFOPLIST_FILE = "Lighting-iOS/Info.plist";
+				INFOPLIST_FILE = "SoftBody-iOS/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -568,6 +568,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.michaelmason.softbodysim;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = SoftBody/Common.h;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -579,7 +580,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = NTPYM9QGRV;
-				INFOPLIST_FILE = "Lighting-iOS/Info.plist";
+				INFOPLIST_FILE = "SoftBody-iOS/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -588,6 +589,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.michaelmason.softbodysim;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = SoftBody/Common.h;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -597,7 +599,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1384A36A22C1B388006036BA /* Build configuration list for PBXProject "Lighting" */ = {
+		1384A36A22C1B388006036BA /* Build configuration list for PBXProject "SoftBody" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1384A37B22C1B389006036BA /* Debug */,
@@ -606,7 +608,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1384A37D22C1B389006036BA /* Build configuration list for PBXNativeTarget "Lighting-macOS" */ = {
+		1384A37D22C1B389006036BA /* Build configuration list for PBXNativeTarget "SoftBody-macOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1384A37E22C1B389006036BA /* Debug */,
@@ -615,7 +617,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1384A3EA22C1F04D006036BA /* Build configuration list for PBXNativeTarget "Lighting-iOS" */ = {
+		1384A3EA22C1F04D006036BA /* Build configuration list for PBXNativeTarget "SoftBody-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1384A3EB22C1F04D006036BA /* Debug */,
