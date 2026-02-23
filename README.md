@@ -9,7 +9,7 @@ https://github.com/user-attachments/assets/39d9bf94-f9a3-4a33-9bac-9215a4f4330f
 
 MetalSoftBody is my 2-week exploration of: 
 - soft-body deformations
-- position based dynamics (PBD) simulations
+- extended position based dynamics (XPBD) simulations
 - writing Metal code + iOS development
 
 This project is not at all "production-ready", it is intended to be small and experimental for learning the basics of Metal and soft-body sims. 
