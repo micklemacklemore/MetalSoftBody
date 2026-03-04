@@ -43,11 +43,11 @@ func simulate(dt: Double) {
 }
 ```
 
-You can see that `simulate()` is very simple. The actual work is done in the steps `preSolve()`, `postSolve()`, and *especially* `solve()`. 
+You can see that `simulate()` is very simple. The actual work is done in the steps `preSolve()`, `solve()` and `postSolve()`
 
 Here's a basic outline of those steps, which is also the general algorithm of (extended) position based dynamics:  
 
-<img width="472" height="425" alt="image" src="https://github.com/user-attachments/assets/6025fd13-9989-4d94-8d64-a930a643214b" />
+<img width="462" height="419" alt="image" src="https://github.com/user-attachments/assets/8cb31896-3a59-494f-967b-a359a3007ca6" />
 
 where: 
 - $v_i$: the current *velocity* of particle *i*
@@ -55,7 +55,7 @@ where:
 - $g$: the force of gravity, represented as a 3D vector `[0, -9.81, 0]`
 - $p_i$: the *previous position* of particle *i*
 - $x_i$: the *current position* of particle *i*
-- $C$: the constraints present in the simulation. This simulation uses only two: ***distance constraints*** and ***volume constraints***. 
+- $C$: the constraints present in the simulation. This simulation uses only two: ***distance constraints*** and ***volume constraints***.
 
 ## References + Thanks
 - Matthias Müller — *Simple and Unbreakable Simulation of Soft Bodies*
