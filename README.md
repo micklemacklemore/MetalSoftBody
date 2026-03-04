@@ -17,7 +17,7 @@ This project is not at all "production-ready", it is intended to be small and ex
 The basic rendering & shading code was repurposed from the sample code in *Metal by Tutorials* by Caroline Begbie & Marius Horga.
 
 ## Features
-- Real-time PBD soft-body physics simulation
+- Real-time XPBD soft-body physics simulation
 - Interactive grabber (raycasting + vertex manipulation)
 - Basic lighting
 
@@ -25,6 +25,37 @@ The basic rendering & shading code was repurposed from the sample code in *Metal
 - Drag (over bunny): grab soft-body
 - Drag (over empty space): rotate camera
 - Pinch: Zoom in/out
+
+## Code & PBD Explanation
+
+If you're interested in how the XPBD soft-body solver works, you'll find the interesting & relevent code in **SoftBody.swift**, which contains the `simulate()` function that updates the soft-body mesh per frame. 
+
+```swift
+// -- SoftBody.swift --
+
+// only slightly modified for brevity
+func simulate(dt: Double) {
+    let gravity = SIMD3<Float>(0, -9.81, 0)
+
+    preSolve(dt: sdt, gravity: [gravity.x, gravity.y, gravity.z])
+    solve(dt: sdt)
+    postSolve(dt: sdt)
+}
+```
+
+You can see that `simulate()` is very simple. The actual work is done in the steps `preSolve()`, `postSolve()`, and *especially* `solve()`. 
+
+Here's a basic outline of those steps, which is also the general algorithm of (extended) position based dynamics:  
+
+<img width="472" height="425" alt="image" src="https://github.com/user-attachments/assets/6025fd13-9989-4d94-8d64-a930a643214b" />
+
+where: 
+- $v_i$: the current *velocity* of particle *i*
+- $\triangle t$: the timestep, essentially the time in seconds between each frame. This app runs in 60fps so it is usually ~0.01667 seconds
+- $g$: the force of gravity, represented as a 3D vector `[0, -9.81, 0]`
+- $p_i$: the *previous position* of particle *i*
+- $x_i$: the *current position* of particle *i*
+- $C$: the constraints present in the simulation. This simulation uses only two: ***distance constraints*** and ***volume constraints***. 
 
 ## References + Thanks
 - Matthias Müller — *Simple and Unbreakable Simulation of Soft Bodies*
