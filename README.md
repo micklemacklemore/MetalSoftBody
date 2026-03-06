@@ -49,6 +49,7 @@ The soft-body solver follows the an XPBD pipeline:
 ```
 let dt = the time step, which is the time (in seconds) since the last simulation step
 let gravity_force = a 3D vector that represents the force of gravity
+let [particles] = an array of particles. each particle has a mass, velocity, position and previousPosition
 
 function simulate():
     // pre-solve
@@ -59,14 +60,40 @@ function simulate():
 
     // solve
     solve all distance constraints & volume constraints
-    update particles with new positions
+    update particles with adjusted positions
 
     // post-solve
     for each particle i:
         i.velocity = (i.position - i.previousPosition) / dt
 ```
-  
+
+In the **preSolve()** step, we iterate through all particles. The force of gravity is applied to the current velocity and the initial *unconstrained* position is calculated from the new velocity (using *explicit integration*). 
+
+In the **solve()** step, the initial *unconstrained* particle positions are adjusted into *constrained* positions after all distance constraints and volume constraints are solved. 
+
+While we kind of expect softbodies to move around like jello, we still need constraints to maintain the overall shape of the mesh and prevent it from collapsing into a pancake. This is the most computationally expensive step. 
+
+In the **postSolve()** step, we iterate through all the particles once more. The velocity is once again updated, using the new *constrained* particle positions after solving the constraints. The new velocity is simply the vector from the previous position to the new position (divided by the timestep) 
+
 You'll find the interesting & relevent code in **SoftBody.swift**, which contains the `simulate()`, `preSolve()`, `solve()` and `postSolve()` methods that updates the soft-body mesh per frame. 
+
+### Constraints
+
+Constraints are basically what stops the mesh from collapsing into a flat pancake. We only use two types of constraints in this solver: **distance constraints** and **volume constraints**. 
+
+#### Distance Constraints
+
+A distance constraint is between two particles ($p_1$ and $p_2$). Each particle has a *mass* ($m_1$ and $m_2$) and we declare that there is a *rest distance* ($d$) between these two particles, in other words the distance between these particles when there are no forces involved. 
+
+<img width="400" height="177" alt="image" src="https://github.com/user-attachments/assets/d809c17c-a17d-4991-9faa-f207ddaf66b1" />
+
+#### Volume Conservation Constraints
+
+A volume conservation constraint conserves the *volume* of a 3D shape, if we treat its vertices like particles ($x_1, x_2, x_3, x_4$). Tetrahedras are used in this case because they're the most simple 3D shape. 
+
+Like distance constraints, volume constraints maintains a *rest volume* between the particles. 
+
+<img width="256" height="225" alt="image" src="https://github.com/user-attachments/assets/8fd6d95b-1f68-4b1c-95c2-2ac96d77fddb" />
 
 
 ## References + Thanks
