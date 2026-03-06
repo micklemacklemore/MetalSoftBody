@@ -26,36 +26,48 @@ The basic rendering & shading code was repurposed from the sample code in *Metal
 - Drag (over empty space): rotate camera
 - Pinch: Zoom in/out
 
-## Code & PBD Explanation
+## Explanation
 
-If you're interested in how the XPBD soft-body solver works, you'll find the interesting & relevent code in **SoftBody.swift**, which contains the `simulate()` function that updates the soft-body mesh per frame. 
+### Simulation Model
 
-```swift
-// -- SoftBody.swift --
+This app simulates a **low-poly Stanford bunny mesh** that has been **tetrahedralized using Delaunay triangulation**.
 
-// only slightly modified for brevity
-func simulate(dt: Double) {
-    let gravity = SIMD3<Float>(0, -9.81, 0)
+Tetrahedralization converts the original surface mesh into a **volumetric mesh made of tetrahedra**, meaning the bunny is not hollow. Instead, the interior volume is filled with tetrahedra.
 
-    preSolve(dt: sdt, gravity: [gravity.x, gravity.y, gravity.z])
-    solve(dt: sdt)
-    postSolve(dt: sdt)
-}
+In the simulation:
+
+- Each **vertex** of the tetrahedral mesh is treated as a **particle**.
+- Each **edge** is treated as a **distance constraint**.
+- Each **tetrahedron** is treated as a **volume constraint**.
+
+*Constraints* are explained in Matthias's video. These constraints are solved using **Extended Position Based Dynamics (XPBD)**.
+
+### XPBD Solver
+
+The soft-body solver follows the an XPBD pipeline:
+
 ```
+let dt = the time step, which is the time (in seconds) since the last simulation step
+let gravity_force = a 3D vector that represents the force of gravity
 
-You can see that `simulate()` is very simple. The actual work is done in the steps `preSolve()`, `solve()` and `postSolve()`
+function simulate():
+    // pre-solve
+    for each particle i:
+        i.velocity = i.velocity + dt * gravity_force
+        i.previousPosition = i.position
+        i.position = position + dt * velocity
 
-Here's a basic outline of those steps, which is also the general algorithm of (extended) position based dynamics:  
+    // solve
+    solve all distance constraints & volume constraints
+    update particles with new positions
 
-<img width="462" height="419" alt="image" src="https://github.com/user-attachments/assets/8cb31896-3a59-494f-967b-a359a3007ca6" />
+    // post-solve
+    for each particle i:
+        i.velocity = (i.position - i.previousPosition) / dt
+```
+  
+You'll find the interesting & relevent code in **SoftBody.swift**, which contains the `simulate()`, `preSolve()`, `solve()` and `postSolve()` methods that updates the soft-body mesh per frame. 
 
-where: 
-- $v_i$: the current *velocity* of particle *i*
-- $\triangle t$: the timestep, essentially the time in seconds between each frame. This app runs in 60fps so it is usually ~0.01667 seconds
-- $g$: the force of gravity, represented as a 3D vector `[0, -9.81, 0]`
-- $p_i$: the *previous position* of particle *i*
-- $x_i$: the *current position* of particle *i*
-- $C$: the constraints present in the simulation. This simulation uses only two: ***distance constraints*** and ***volume constraints***.
 
 ## References + Thanks
 - Matthias Müller — *Simple and Unbreakable Simulation of Soft Bodies*
